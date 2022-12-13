@@ -1,4 +1,4 @@
----sql
+```sql
 
 /* --------------------
    Case Study Questions
@@ -111,4 +111,4 @@ SELECT customer_id, SUM(points) FROM (
   WHERE DATE_PART('month',order_date) = 1) as cte_table
 GROUP BY customer_id;
 
----
+```
