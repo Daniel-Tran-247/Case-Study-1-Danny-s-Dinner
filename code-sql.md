@@ -205,6 +205,7 @@ USING (customer_id)
 ORDER BY customer_id, order_date;
 
 -- [Bonus #2 - Rank All The Things]
+
 WITH cte_table AS (
   SELECT 
       customer_id, 
