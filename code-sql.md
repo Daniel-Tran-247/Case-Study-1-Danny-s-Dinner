@@ -187,4 +187,48 @@ WHERE customer_id != 'C'
 GROUP BY customer_id
 ORDER BY customer_id;
 
+-- [Bonus #1 - Join All The Things] Recreate the following table output using the available data
+
+SELECT 
+    customer_id, 
+    order_date,
+    product_name, 
+    price,
+    CASE WHEN order_date >= join_date THEN 'Y'
+    ELSE 'N'
+    END AS member 
+FROM dannys_diner.sales
+JOIN dannys_diner.menu
+USING (product_id)
+LEFT JOIN dannys_diner.members
+USING (customer_id)
+ORDER BY customer_id, order_date;
+
+-- [Bonus #2 - Rank All The Things] Danny also requires further information about the ranking of customer products, but he purposely does not need the ranking for non-member purchases so he expects null ranking values for the records when customers are not yet part of the loyalty program.
+
+WITH cte_table AS (
+  SELECT 
+      customer_id, 
+      order_date,
+      product_name, 
+      price,
+      CASE WHEN order_date >= join_date THEN 'Y'
+      ELSE 'N'
+      END AS member
+  FROM dannys_diner.sales
+  JOIN dannys_diner.menu
+  USING (product_id)
+  LEFT JOIN dannys_diner.members
+  USING (customer_id)
+  ORDER BY customer_id, order_date
+  ) 
+SELECT 
+    *,
+    CASE WHEN member = 'N' THEN NULL
+    ELSE DENSE_RANK() OVER (
+      PARTITION BY customer_id, member
+      ORDER BY order_date
+      )
+    END AS ranking
+FROM cte_table;
 ```
