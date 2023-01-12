@@ -273,5 +273,82 @@ WHERE ranking = 1;
 
 ### Q8. What is the total items and amount spent for each member before they became a member?
 ```sql
-
+SELECT 
+    customer_id,
+    COUNT(product_name) AS total_items, 
+    SUM(price) AS total_spent
+FROM dannys_diner.sales
+JOIN dannys_diner.menu
+USING (product_id)
+JOIN dannys_diner.members
+USING (customer_id)
+WHERE order_date < join_date
+GROUP BY customer_id;
 ```
+
+**Result**
+| customer_id | total_items | total_spent |
+| ----------- | ----------- | ----------- |
+| A           | 2           | 25          |
+| B           | 2           | 40          |
+
+### Q9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+```sql
+WITH cte_table AS (
+  SELECT 
+      customer_id,
+      CASE WHEN product_name = 'sushi' THEN price * 20
+      ELSE price * 10
+      END AS points
+  FROM dannys_diner.sales
+  JOIN dannys_diner.menu
+  USING (product_id)
+ )
+ SELECT 
+    customer_id, 
+    SUM(points) AS points
+ FROM cte_table 
+ GROUP BY customer_id
+ ORDER BY customer_id;
+```
+
+**Result**
+| customer_id | points	     |
+| ----------- | ------------ |
+| A           | 860          |
+| B           | 940          |
+| C	      | 360	     |
+
+### Q10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+```sql
+WITH cte_table AS (
+  SELECT 
+      customer_id,
+      order_date,
+      CASE WHEN order_date BETWEEN join_date AND join_date+6 THEN price*20
+      WHEN product_name = 'sushi' THEN price * 20
+      ELSE price * 10
+      END AS points
+  FROM dannys_diner.sales
+  JOIN dannys_diner.menu
+  USING (product_id)
+  JOIN dannys_diner.members
+  USING (customer_id)
+  WHERE DATE_PART('month', order_date) = 1
+)
+SELECT 
+    customer_id,
+    SUM(points) AS total_points
+FROM cte_table
+WHERE customer_id != 'C'
+GROUP BY customer_id
+ORDER BY customer_id;
+```
+
+**Result**
+| customer_id | total_points |
+| ----------- | ------------ |
+| A           | 1370         |
+| B           | 820          |
+
+
