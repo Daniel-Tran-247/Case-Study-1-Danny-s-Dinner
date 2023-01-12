@@ -187,7 +187,7 @@ WHERE customer_id != 'C'
 GROUP BY customer_id
 ORDER BY customer_id;
 
--- [Bonus #1 - Join All The Things] Recreate the following table output using the available data
+-- [Bonus #1 - Join All The Things] 
 
 SELECT 
     customer_id, 
@@ -204,8 +204,7 @@ LEFT JOIN dannys_diner.members
 USING (customer_id)
 ORDER BY customer_id, order_date;
 
--- [Bonus #2 - Rank All The Things] Danny also requires further information about the ranking of customer products, but he purposely does not need the ranking for non-member purchases so he expects null ranking values for the records when customers are not yet part of the loyalty program.
-
+-- [Bonus #2 - Rank All The Things]
 WITH cte_table AS (
   SELECT 
       customer_id, 
