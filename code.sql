@@ -1,5 +1,3 @@
-```sql
-
 /* --------------------
    Case Study Questions
    --------------------*/
@@ -231,4 +229,3 @@ SELECT
       )
     END AS ranking
 FROM cte_table;
-```
